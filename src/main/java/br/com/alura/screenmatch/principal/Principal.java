@@ -20,14 +20,16 @@ public class Principal {
     private ConverteDados conversor = new ConverteDados();
     private final String ENDERECO = "https://www.omdbapi.com/?t=";
     private final String API_KEY = "&apikey=6585022c";
+    private List<DadosSerie> dadosSeries = new ArrayList<>();
 
     public void exibeMenu() {
-        var menu = """
-                1 - Buscar séries
-                2 - Buscar episódios
-                
-                0 - Sair                                 
-                """;
+    	var menu = """
+    	        1 - Buscar séries
+    	        2 - Buscar episódios
+    	        3 - Listar séries buscadas
+
+    	        0 - Sair                                 
+    	        """;
 
         System.out.println(menu);
         var opcao = leitura.nextInt();
@@ -39,6 +41,9 @@ public class Principal {
                 break;
             case 2:
                 buscarEpisodioPorSerie();
+                break;
+            case 3:
+                listarSeriesBuscadas();
                 break;
             case 0:
                 System.out.println("Saindo...");
@@ -71,5 +76,9 @@ public class Principal {
             temporadas.add(dadosTemporada);
         }
         temporadas.forEach(System.out::println);
+    }
+    
+    private void listarSeriesBuscadas() {
+        dadosSeries.forEach(System.out::println)
     }
 }
