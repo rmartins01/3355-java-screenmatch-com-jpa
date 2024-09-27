@@ -1,5 +1,12 @@
 package br.com.alura.screenmatch.principal;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
 import br.com.alura.screenmatch.model.Episodio;
@@ -7,13 +14,6 @@ import br.com.alura.screenmatch.model.Serie;
 import br.com.alura.screenmatch.repository.SerieRepository;
 import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConverteDados;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class Principal {
 
@@ -38,6 +38,8 @@ public class Principal {
                     1 - Buscar séries
                     2 - Buscar episódios
                     3 - Listar séries buscadas
+                    4 - Buscar série por título
+                    5 - Numero comparacao
                                     
                     0 - Sair                                 
                     """;
@@ -56,6 +58,12 @@ public class Principal {
                 case 3:
                     listarSeriesBuscadas();
                     break;
+                case 4:
+                    buscarSeriePorTitulo();
+                    break;
+                case 5:
+                	buscarSerieMaisAvaliadaQue();
+                	break;
                 case 0:
                     System.out.println("Saindo...");
                     break;
@@ -86,9 +94,7 @@ public class Principal {
         System.out.println("Escolha uma série pelo nome");
         var nomeSerie = leitura.nextLine();
 
-        Optional<Serie> serie = series.stream()
-                .filter(s -> s.getTitulo().toLowerCase().contains(nomeSerie.toLowerCase()))
-                .findFirst();
+        Optional<Serie> serie = repositorio.findByTituloContainingIgnoreCase(nomeSerie);
 
         if(serie.isPresent()) {
 
@@ -120,4 +126,32 @@ public class Principal {
                 .sorted(Comparator.comparing(Serie::getGenero))
                 .forEach(System.out::println);
     }
+    
+	private void buscarSeriePorTitulo() {
+		System.out.println("Escolha um série pelo nome: ");
+		var nomeSerie = leitura.nextLine();
+		Optional<Serie> serieBuscada = repositorio.findByTituloContainingIgnoreCase(nomeSerie);
+
+		if (serieBuscada.isPresent()) {
+			System.out.println("Dados da série: " + serieBuscada.get());
+
+		} else {
+			System.out.println("Série não encontrada!");
+		}
+	}
+
+	private void buscarSerieMaisAvaliadaQue() {
+		System.out.println("Digite a avaliação inicial: ");
+		var qtd = leitura.nextDouble();
+		Optional<List<Serie>> serieBuscada = repositorio.findByAvaliacaoGreaterThan(qtd);
+		
+		if (serieBuscada.isPresent()) {
+			serieBuscada.get().forEach(s -> System.out.println("Dados da série: " + s));
+			
+		} else {
+			System.out.println("Série não encontrada!");
+		}
+	}
+	
+	
 }
